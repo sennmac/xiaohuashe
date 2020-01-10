@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {
   Person,
 } from 'blockstack';
+import Navbar from './navbar'
+import TodoList from './todolist'
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
@@ -31,6 +33,7 @@ export default class Profile extends Component {
           <img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" alt=""/>
         </div>
         <h1>Hello, <span id="heading-name">{ person.name() ? person.name() : 'Nameless Person' }</span>!</h1>
+  
         <p className="lead">
           <button
             className="btn btn-primary btn-lg"
@@ -40,6 +43,8 @@ export default class Profile extends Component {
             Logout
           </button>
         </p>
+        <Navbar/>
+        <TodoList/>
       </div> : null
     );
   }

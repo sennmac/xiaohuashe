@@ -24,6 +24,7 @@ export default class App extends Component {
 
   render() {
     return (
+
       <div className="site-wrapper">
         <div className="site-wrapper-inner">
           { !userSession.isUserSignedIn() ?
