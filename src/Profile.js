@@ -3,7 +3,6 @@ import {
   Person,
 } from 'blockstack';
 import Navbar from './navbar'
-import TodoList from './todolist'
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
@@ -44,7 +43,6 @@ export default class Profile extends Component {
           </button>
         </p>
         <Navbar/>
-        <TodoList/>
       </div> : null
     );
   }

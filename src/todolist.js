@@ -1,19 +1,120 @@
-import React from 'react'
+// Fragment 是一种占位符形式，类似于 Vue 的 Template
+import React, { Component, Fragment } from 'react';
 
-export default function TodoList() {
-  return (
-    <div>
-      <div className="hero is-info">
-        <div className="hero-body has-text-centered">
-          <p className="title is-1">Todos</p>
-        </div>
-      </div>
+// 引入组件
+import TodoItem from './TodoItem';
 
-      <section className="section">
-        <div className="container">
-          Todos will show up here later
-        </div>
-      </section>
-    </div>
-  )
+// 引用样式
+import './styles/style.css';
+
+class TodoList extends Component {
+
+    // 构造函数
+    constructor(props) {
+        super(props);
+        // 定义数据
+        this.state = {
+            inputValue: '',
+            list: []
+        }
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleBtnClick = this.handleBtnClick.bind(this);
+        this.handleItemDelete = this.handleItemDelete.bind(this);
+
+    }
+
+    componentWillMount() {
+        const { userSession } = this.props;
+        const options = { decrypt: false };
+        userSession.getFile('todo.json', options).then(list => {
+            this.setState(() => ({
+                list: JSON.parse(list),
+            }));
+        });
+    }
+    // 渲染页面
+    render() {
+        return (
+            <Fragment>
+                <div>
+                    <label htmlFor="insertArea">输入内容：</label>
+                    {/* 单项数据绑定 */}
+                    {/* 在 React 中，绑定时间的，一般为半驼峰形式 */}
+                    <input
+                        id="insertArea"
+                        type="text"
+                        value={this.state.inputValue}
+                        onChange={this.handleInputChange}
+                    />
+                    <button onClick={this.handleBtnClick}>提交</button>
+                </div>
+                <ul>
+                    {/* 精简 JSX，将部分抽取出来 */}
+                    {this.getTodoItem()}
+                </ul>
+            </Fragment >
+        )
+    }
+
+    // 获取单独项
+    getTodoItem() {
+
+        console.log(this.state.list);
+
+        return this.state.list.map((item, index) => {
+            return (
+                <TodoItem
+                    key={index}
+                    item={item}
+                    index={index}
+                    handleItemDelete={this.handleItemDelete}
+                />
+            )
+        })
+
+    }
+
+    // 方法体 - 输入内容
+    handleInputChange(e) {
+        const value = e.target.value;
+        this.setState(() => ({
+            inputValue: value
+        }))
+    }
+
+    // 方法体 - 点击提交
+    handleBtnClick() {
+        const options = { encrypt: false }
+
+        const { userSession } = this.props;
+        const list = this.state.list,
+            inputValue = this.state.inputValue;
+        this.setState(() => ({
+            list: [...list, inputValue],
+            inputValue: ''
+        }))
+        console.log([...list, inputValue]);
+        userSession.putFile('todo.json', JSON.stringify([...list, inputValue]), options)
+
+        // 或者可以这样写：
+        // this.setState( (prevState) => ({
+        //   list: [...prevState.list, prevState.inputValue],
+        //   inputValue: ''
+        // }))
+
+    }
+
+    // 方法体 - 删除项目
+    handleItemDelete(index) {
+        // immutable - state 不允许做任何改变
+        const list = [...this.state.list];
+        list.splice(index, 1);
+
+        this.setState(() => ({
+            list: list
+        }))
+    }
+
 }
+
+export default TodoList;
